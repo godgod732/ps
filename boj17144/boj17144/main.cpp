@@ -10,7 +10,7 @@ typedef struct _dust {
 	point p;
 	int amount;
 }dust;
-dust newDust[100000];
+dust newDust[13000];
 point airCleaner[2];
 //initialize
 void init() {
@@ -30,11 +30,12 @@ void makeDust() {
 			if (map[i][j] >= 5) {
 				int steal = 0;
 				for (int k = 0; k < 4; k++) {
-					if (map[i + dx[k]][j + dy[k]] != -1 && map[i + dx[k]][j + dy[k]] != -2) {
-						steal -= map[i][j] / 5;
+					if (map[i + dx[k]][j + dy[k]] >= 0) {
+						int amount = map[i][j] / 5;
+						steal -= amount;
 						newDust[dustIdx].p.r = i + dx[k];
 						newDust[dustIdx].p.c = j + dy[k];
-						newDust[dustIdx].amount = map[i][j] / 5;
+						newDust[dustIdx].amount = amount;
 						dustIdx++;
 					}
 				}
@@ -52,21 +53,22 @@ void makeDust() {
 }
 //air cleaning
 void airCleaning() {
+	int i;
 	//top cleaning
 	// [first r-1][1] to [2][1]
-	for (int i = airCleaner[0].r - 1; i >= 2; i--) {
+	for (i = airCleaner[0].r - 1; i >= 2; i--) {
 		map[i][1] = map[i - 1][1];
 	}
 	//[1][1] to [1][c-1]
-	for (int i = 1; i <= c - 1; i++) {
+	for (i = 1; i <= c - 1; i++) {
 		map[1][i] = map[1][i + 1];
 	}
 	//[1][c] to [firstR -1][c]
-	for (int i = 1; i <= airCleaner[0].r - 1; i++) {
+	for (i = 1; i <= airCleaner[0].r - 1; i++) {
 		map[i][c] = map[i + 1][c];
 	}
 	//[firstR][C] to [firstR][firstC+2]
-	for (int i = c; i >= airCleaner[0].c + 2;i--) {
+	for (i = c; i >= airCleaner[0].c + 2;i--) {
 		map[airCleaner[0].r][i] = map[airCleaner[0].r][i - 1];
 	}
 	//make zero dust
@@ -74,19 +76,19 @@ void airCleaning() {
 
 	//bottom cleaning
 	//[secondR + 1][1] to [r-1][1]
-	for (int i = airCleaner[1].r + 1; i <= r-1; i++) {
+	for (i = airCleaner[1].r + 1; i <= r-1; i++) {
 		map[i][1] = map[i + 1][1];
 	}
 	//[r][1] to [r][c-1]
-	for (int i = 1; i <= c - 1; i++) {
+	for (i = 1; i <= c - 1; i++) {
 		map[r][i] = map[r][i + 1];
 	}
 	//[r][c] to [secondR+1][c]
-	for (int i = r; i >= airCleaner[1].r+1;i--) {
+	for (i = r; i >= airCleaner[1].r+1;i--) {
 		map[i][c] = map[i - 1][c];
 	}
 	//[secondR][C] to [secondR][secondC +2] 
-	for (int i = c; i >= airCleaner[1].c + 2; i--) {
+	for (i = c; i >= airCleaner[1].c + 2; i--) {
 		map[airCleaner[1].r][i] = map[airCleaner[1].r][i - 1];
 	}
 	//make zero dust
